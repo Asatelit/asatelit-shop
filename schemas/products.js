@@ -1,9 +1,25 @@
 /*
+ * A list of product image objects, each one representing an image
+ * associated with the product.
+*/
+NEWSCHEMA('Image', (schema) => {
+  schema.define('id', 'UID')(() => UID()); // Globally unique identifier.
+  schema.define('product_id', Number); // Id of the image.
+  schema.define('position', Number); // The id of the image's product.
+  schema.define('created_at', Date); // The date and time (ISO 8601 format) when the image was created.
+  schema.define('updated_at', Date); // // The date and time (ISO 8601 format) when the image was last updated.
+  schema.define('width', Number); // The width of the image in pixels.
+  schema.define('height', Number); // The height of the image in pixels.
+  schema.define('src', String); // The relative path of the product image.
+  schema.define('variant_ids', '[Object]'); // The array of attributes for the variant that the image is associated with.
+});
+
+/*
  * The Metafield resource allows you to add additional information to other Admin API resources. Metafields can
  * be used in several ways, such as to add a summary to a blog post. You can also use metafields to share
  * information with other Shopify apps.
 */
-NEWSCHEMA('ProductMetafield').make((schema) => {
+NEWSCHEMA('ProductMetafield', (schema) => {
   schema.define('id', 'UID')(() => UID()); // Globally unique identifier.
   schema.define('name', 'String(255)'); // The product option’s name.
   schema.define('values', '[String(255)]'); // The corresponding value to the product option name.
@@ -15,7 +31,7 @@ NEWSCHEMA('ProductMetafield').make((schema) => {
  * A product may have a maximum of 3 options.
  * 255 characters limit each.
 */
-NEWSCHEMA('ProductOptions').make((schema) => {
+NEWSCHEMA('ProductOptions', (schema) => {
   schema.define('created_at', Date)(() => new Date()); // The date and time (ISO 8601 format) when the metafield was created.
   schema.define('description', String); // A description of the information that the metafield contains.
   schema.define('id', 'UID')(() => UID()); // The unique ID of the metafield.
@@ -33,7 +49,7 @@ NEWSCHEMA('ProductOptions').make((schema) => {
  * Product resource will have a variant for every possible combination of its options. Each product can have a
  * maximum of three options and a maximum of 100 variants.
 */
-NEWSCHEMA('ProductVariant').make((schema) => {
+NEWSCHEMA('ProductVariant', (schema) => {
   schema.define('barcode', String); // The barcode, UPC, or ISBN number for the product.
   schema.define('compare_at_price', 'String(255)'); // The original price of the item before an adjustment or a sale.
   schema.define('created_at', Date)(() => new Date()); // The date and time (ISO 8601 format) when the product variant was created.
@@ -68,12 +84,12 @@ NEWSCHEMA('ProductVariant').make((schema) => {
  * qualifies as a product, as do services (such as equipment rental, work for hire,
  * customization of another product or an extended warranty).
 */
-NEWSCHEMA('Product').make((schema) => {
+NEWSCHEMA('Product', (schema) => {
   schema.define('created_at', Date)(() => new Date()); // The date and time (ISO 8601 format) when the product was created.
   schema.define('body_html', String); // A description of the product. Supports HTML formatting.
   schema.define('handle', String); // A unique human-friendly string for the product. Automatically generated from the product's title. Used by the Liquid templating language to refer to objects.
   schema.define('id', 'UID')(() => UID()); // A unique numeric identifier for the product. Each id is unique across the shop system. No two products will have the same id, even if they're from different shops.
-  schema.define('images', 'Images'); // A list of product image objects, each one representing an image associated with the product.
+  schema.define('images', 'Image'); // A list of product image objects, each one representing an image associated with the product.
   schema.define('options', '[ProductOptions]'); // The custom product property names like Size, Color, and Material. You can add up to 3 options of up to 255 characters each.
   schema.define('product_type', 'String(255)'); // A categorization for the product used for filtering and searching products.
   schema.define('published_at', Date); // The date and time (ISO 8601 format) when the product was published. Can be set to null to unpublish the product from the Online Store channel.
@@ -87,70 +103,12 @@ NEWSCHEMA('Product').make((schema) => {
   schema.define('variants', '[ProductVariant]'); //  A list of product variants, each representing a different version of the product. To retrieve the presentment_prices property on a variant, include the request header 'X-Shopify-Api-Features': 'include-presentment-prices'.
   schema.define('vendor', 'String(255)'); // The name of the product's vendor.
 
-  // GETS LISTING
-  schema.setQuery((error, options, callback) => {
-    const searchCond = { };
-
-    // options.id {String}
-
-    if (options.id && typeof (options.id) === 'string') searchCond.id = options.id.split(',');
-
-    DB('products')
-      .find(searchCond)
-      .sort({ title: 1 })
-      .toArray((err, response) => callback(response));
+  schema.setQuery(($) => {
+    DB('products').find().toArray((err, docs) => $.callback(docs));
   });
 
-  // SAVES THE LESSON INTO THE DATABASE
-  schema.setSave((error, model, options, callback) => {
-    const dt = new Date();
-    const entry = model.$clean();
-
-    function cb(err, response) {
-      callback(SUCCESS(response));
-    }
-
-    if (!entry.id) {
-      DB('lessons').insertOne(
-        Object.assign(entry, {
-          id: UID(),
-          date_created: dt,
-          date_updated: dt,
-          is_removed: false,
-        }), cb);
-    } else {
-      delete entry.date_created;
-      DB('lessons').updateOne(
-        { id: entry.id },
-        { $set: Object.assign(
-          entry, {
-            date_updated: dt,
-            is_removed: false,
-          }),
-        }, cb);
-    }
-  });
-
-  // GETS A SPECIFIC LESSON
-  schema.setGet((error, model, options, callback) => {
-    // options.id {String}
-    DB('lessons')
-      .find({ id: options.id })
-      .toArray((err, result) => {
-        callback(result[0]);
-      });
-  });
-
-  // REMOVES LESSON
-  schema.setRemove((error, id, callback) => {
-    const dt = new Date();
-    DB('lessons').updateOne({ id }, {
-      $set: {
-        is_removed: true,
-        date_updated: dt,
-      },
-    }, (err, response) => {
-      callback(SUCCESS(response));
-    });
+  schema.setRead(($) => {
+    const id = parseInt($.id || 0);
+    DB('products').findOne({ id }, (err, doc) => $.callback(doc));
   });
 });

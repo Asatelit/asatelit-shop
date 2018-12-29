@@ -2,9 +2,9 @@ language: node_js
 cache:
   - npm
 node_js:
-  - "4.0"
+  - "10.0"
 install:
-  - npm install
+  - yarn install
 script:
   - cd test
   - sh run.sh

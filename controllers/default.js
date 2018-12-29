@@ -25,6 +25,18 @@ exports.install = function defaultController() {
   // Deletes a customer.
   ROUTE('DELETE /admin/customers/{customer_id}                            *Customer --> @delete');
 
+  // ORDER RESOURCE
+  // Retrieves a list of orders
+  ROUTE('GET    /admin/orders                                             *Order --> @query');
+  // Retrieves a specific order
+  ROUTE('GET    /admin/orders/{order_id}                                  *Order --> @read');
+  // Creates an order
+  ROUTE('POST   /admin/orders                                             *Order --> @insert');
+  // Updates an order
+  ROUTE('PUT    /admin/orders/{order_id}                                  *Order --> @update');
+  // Deletes an order
+  ROUTE('DELETE /admin/orders/{order_id}                                  *Order --> @delete');
+
   // CUSTOMER ADDRESS RESOURCE
   // Retrieves a list of addresses for a customer
   ROUTE('GET    /admin/customers/{customer_id}/addresses                  *Address --> @query');

@@ -1,6 +1,6 @@
 /*
-* Attaches additional metadata to a shop's resources.
-*/
+ * Attaches additional metadata to a shop's resources.
+ */
 NEWSCHEMA('CustomerMetafield', (schema) => {
   schema.define('key', 'String(30)', true); // An identifier for the metafield (maximum of 30 characters).
   schema.define('namespace', 'String(20)', true); //  A container for a set of metadata (maximum of 20 characters). Namespaces help distinguish between metadata that you created and metadata created by another individual with a similar namespace.
@@ -10,38 +10,17 @@ NEWSCHEMA('CustomerMetafield', (schema) => {
 });
 
 /*
-* The Customer Address resource represents stores the addresses that a customer has entered. Each customer
-* can have multiple addresses associated with them.
-*/
-NEWSCHEMA('CustomerAddress', (schema) => {
-  schema.define('address1', String); // The customer's mailing address
-  schema.define('address2', String); // An additional field for the customer's mailing address.
-  schema.define('city', 'String(255)'); // The customer's city, town, or village.
-  schema.define('country', 'String(50)'); // The customer's country.
-  schema.define('country_code', 'String(2)'); // The two-letter country code corresponding to the customer's country.
-  schema.define('country_name', 'String(50)'); // The customer’s normalized country name.
-  schema.define('company', 'String(255)'); // The customer’s company.
-  schema.define('first_name', 'String(50)'); // The customer’s first name.
-  schema.define('last_name', 'String(50)'); // The customer’s last name.
-  schema.define('name', 'String(101)'); // The customer’s first and last names.
-  schema.define('phone', 'Phone'); // The customer’s phone number at this address.
-  schema.define('province', 'String(255)'); // The customer’s region name. Typically a province, a state, or a prefecture.
-  schema.define('province_code', 'String(2)'); // The two-letter code for the customer’s region.
-  schema.define('zip', 'Zip'); // The customer’s postal code, also known as zip, postcode, Eircode, etc.
-});
-
-/*
  * A product represents an individual item for sale in a Areama store. Products are often physical, but they don't have to be.
  * For example, a digital download (such as a movie, music or ebook file) also
  * qualifies as a product, as do services (such as equipment rental, work for hire,
  * customization of another product or an extended warranty).
-*/
+ */
 NEWSCHEMA('Customer', (schema) => {
   schema.define('accepts_marketing', Boolean); // Whether the customer has consented to receive marketing material via email.
-  schema.define('addresses', '[CustomerAddress]'); //
+  schema.define('addresses', '[Address]'); //
   schema.define('currency', 'String(3)'); // The three-letter code (ISO 4217 format) for the currency that the customer used when they paid for their last order. Defaults to the shop currency.
   schema.define('created_at', Date); // The date and time (ISO 8601 format) when the customer was created.
-  schema.define('default_address', 'CustomerAddress'); // The default address for the customer.
+  schema.define('default_address', 'Address'); // The default address for the customer.
   schema.define('email', 'Email'); // The unique email address of the customer. Attempting to assign the same email address to multiple customers returns an error.
   schema.define('first_name', 'String(50)'); // The customer's first name.
   schema.define('id', 'UID'); // A unique identifier for the customer.
@@ -61,7 +40,9 @@ NEWSCHEMA('Customer', (schema) => {
   schema.define('verified_email', Boolean); // Whether the customer has verified their email address.
 
   schema.setQuery(($) => {
-    DB('customers').find().toArray((err, docs) => $.callback(docs));
+    DB('customers')
+      .find()
+      .toArray((err, docs) => $.callback(docs));
   });
 
   schema.setGet(($) => {

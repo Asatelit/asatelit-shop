@@ -13,6 +13,9 @@
 .idea/
 
 # misc
+debug.pid
+tmp
+logs
 .DS_Store
 .env.local
 .env.development.local

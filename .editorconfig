@@ -2,5 +2,11 @@
 root = true
 
 # Indentation override for all JS under lib directory
+[*.js]
 indent_style = space
 indent_size = 2
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.js]
+charset = utf-8

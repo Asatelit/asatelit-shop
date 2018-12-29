@@ -1,14 +1,14 @@
-name                            : Lelavka Backend
+name                            : Asatelit Shop Backend
 author                          : Asatelit
 version                         : 1.0.0
 
 // Database
-mongo_db                         : mongodb://lelavka-admin:d5vJtPB1obd3@ds145184.mlab.com:45184/lelavka
-database                        : lelavka
+mongo_db                        : mongodb://root:password@ds145184.mlab.com:45184/shop
+database                        : shop
 
 // Mail settings
-mail_smtp                       : smtp.lelavka.com
+mail_smtp                       : smtp.asatelit.com
 mail_smtp_options               : {"secure":false,"port":25,"user":"","password":"","timeout":10000}
-mail_address_from               : sales@lelavka.com
-mail_address_reply              : sales@lelavka.com
+mail_address_from               : sales@asatelit.com
+mail_address_reply              : sales@asatelit.com
 mail_address_copy               :

@@ -1,7 +1,7 @@
 {
-  "name": "lelavka-backend",
+  "name": "asatelit-shop",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "release.js",
   "author": "Asatelit <asatelit@gmail.com>",
   "license": "MIT",
   "private": true,
