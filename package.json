@@ -1,0 +1,19 @@
+{
+  "name": "lelavka-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Asatelit <asatelit@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "jsonwebtoken": "^8.4.0",
+    "mongodb": "^3.1.10",
+    "total.js": "^3.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-node": "^4.0.0",
+    "eslint-config-prettier": "^3.3.0",
+    "prettier": "^1.15.3"
+  }
+}
